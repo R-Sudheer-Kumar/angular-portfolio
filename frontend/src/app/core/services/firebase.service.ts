@@ -8,7 +8,10 @@ import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Experience, Profile, Project, Skill } from '../models/portfolio.models';
 
-const firebaseConfig = {
+import { environment } from '../../../environments/environment';
+
+// Fallback config for development if environment vars are not set
+const defaultFirebaseConfig = {
     apiKey: "AIzaSyDlYKVk9EtQg6j44Dv9HZuazSUDgL2LpgE",
     authDomain: "portfolio-latest-440.firebaseapp.com",
     projectId: "portfolio-latest-440",
@@ -22,7 +25,12 @@ const firebaseConfig = {
     providedIn: 'root'
 })
 export class FirebaseService {
-    private app = initializeApp(firebaseConfig);
+    // Use environment config if valid, otherwise fallback to default
+    private config = (environment.firebase && environment.firebase.apiKey !== 'YOUR_API_KEY')
+        ? environment.firebase
+        : defaultFirebaseConfig;
+
+    private app = initializeApp(this.config);
     private analytics = getAnalytics(this.app);
     private db = getFirestore(this.app);
     private auth = getAuth(this.app);
