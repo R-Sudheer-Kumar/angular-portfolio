@@ -8,3 +8,4 @@ firebase-admin
 pydantic-settings
 pydantic>=2.0.0
 python-dotenv
+gunicorn
