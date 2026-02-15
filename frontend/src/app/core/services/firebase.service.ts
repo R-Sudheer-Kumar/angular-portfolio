@@ -10,25 +10,12 @@ import { Experience, Profile, Project, Skill } from '../models/portfolio.models'
 
 import { environment } from '../../../environments/environment';
 
-// Fallback config for development if environment vars are not set
-const defaultFirebaseConfig = {
-    apiKey: "AIzaSyDlYKVk9EtQg6j44Dv9HZuazSUDgL2LpgE",
-    authDomain: "portfolio-latest-440.firebaseapp.com",
-    projectId: "portfolio-latest-440",
-    storageBucket: "portfolio-latest-440.firebasestorage.app",
-    messagingSenderId: "38429155654",
-    appId: "1:38429155654:web:fbdf1a831c3ed4e7c44547",
-    measurementId: "G-N2CX43F671"
-};
-
 @Injectable({
     providedIn: 'root'
 })
 export class FirebaseService {
-    // Use environment config if valid, otherwise fallback to default
-    private config = (environment.firebase && environment.firebase.apiKey !== 'YOUR_API_KEY')
-        ? environment.firebase
-        : defaultFirebaseConfig;
+    // Use environment config injected by set-env.js
+    private config = environment.firebase;
 
     private app = initializeApp(this.config);
     private analytics = getAnalytics(this.app);
