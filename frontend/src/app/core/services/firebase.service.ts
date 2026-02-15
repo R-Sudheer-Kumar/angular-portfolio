@@ -8,25 +8,43 @@ import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Experience, Profile, Project, Skill } from '../models/portfolio.models';
 
-import { environment } from '../../../environments/environment';
-
 @Injectable({
     providedIn: 'root'
 })
 export class FirebaseService {
-    // Use environment config injected by set-env.js
-    private config = environment.firebase;
+    private app;
+    private analytics;
+    private db;
+    private auth;
+    private storage;
 
-    private app = initializeApp(this.config);
-    private analytics = getAnalytics(this.app);
-    private db = getFirestore(this.app);
-    private auth = getAuth(this.app);
-    private storage = getStorage(this.app);
-
+    // Observables initialized in constructor
     private userSubject = new BehaviorSubject<User | null>(null);
-    currentUser$ = this.userSubject.asObservable(); // Renamed to match usage in AdminComponent
+    currentUser$ = this.userSubject.asObservable();
 
     constructor() {
+        // Initialize Firebase with process.env (injected by @ngx-env/builder)
+        // Note: Angular doesn't have process.env by default. This relies on @ngx-env/builder
+        const config = {
+            apiKey: process.env['NG_APP_FIREBASE_API_KEY'],
+            authDomain: process.env['NG_APP_FIREBASE_AUTH_DOMAIN'],
+            projectId: process.env['NG_APP_FIREBASE_PROJECT_ID'],
+            storageBucket: process.env['NG_APP_FIREBASE_STORAGE_BUCKET'],
+            messagingSenderId: process.env['NG_APP_FIREBASE_MESSAGING_SENDER_ID'],
+            appId: process.env['NG_APP_FIREBASE_APP_ID'],
+            measurementId: process.env['NG_APP_FIREBASE_MEASUREMENT_ID']
+        };
+
+        if (!config.apiKey) {
+            console.error('Firebase config missing! Check your .env file or environment variables.');
+        }
+
+        this.app = initializeApp(config);
+        this.analytics = getAnalytics(this.app);
+        this.db = getFirestore(this.app);
+        this.auth = getAuth(this.app);
+        this.storage = getStorage(this.app);
+
         this.auth.onAuthStateChanged(user => this.userSubject.next(user));
     }
 
