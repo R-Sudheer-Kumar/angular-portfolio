@@ -12,11 +12,28 @@ Features:
 - Clean error handling
 """
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import logging
+import sys
 
-from .config import settings
-from .routes import auth, projects, skills, experiences, contact, profile
+# Configure logging to stdout
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    stream=sys.stdout,
+)
+logger = logging.getLogger(__name__)
+
+try:
+    from fastapi import FastAPI
+    from fastapi.middleware.cors import CORSMiddleware
+    from .config import settings
+    # Import routes explicitly
+    from .routes import auth, projects, skills, experiences, contact, profile
+except Exception as e:
+    logger.error(f"Failed to import dependencies: {e}")
+    raise e
+
+logger.info("Starting Portfolio API...")
 
 # ─── Application Setup ───────────────────────────────────
 
