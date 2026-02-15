@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// Try to load .env for local dev, but ignore errors if missing (CI/CD)
-try { require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); } catch (e) { }
 
 // Generate the file content using process.env
 const envFileContent = `export const environment = {
