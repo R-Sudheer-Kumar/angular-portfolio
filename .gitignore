@@ -5,6 +5,11 @@ ehthumbs.db
 npm-debug.log
 yarn-error.log
 
+# Generated Config
+frontend/public/config.json
+frontend/src/environments/environment.prod.ts
+frontend/src/environments/environment.ts
+
 # Node
 node_modules/
 dist/
