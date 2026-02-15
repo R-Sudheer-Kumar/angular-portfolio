@@ -9,5 +9,5 @@ export const environment = {
         appId: 'YOUR_APP_ID',
         measurementId: 'YOUR_MEASUREMENT_ID'
     },
-    apiUrl: 'https://your-api-domain.com/api'
+    apiUrl: 'https://<YOUR_RENDER_APP_NAME>.onrender.com/api'
 };
