@@ -1,0 +1,24 @@
+# OS Junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+npm-debug.log
+yarn-error.log
+
+# Node
+node_modules/
+dist/
+build/
+.angular/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Editor
+.vscode/
+.idea/
