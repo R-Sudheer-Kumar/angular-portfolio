@@ -1,20 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-// Try to load dotenv for local development (optional in CI/Production)
-try {
-    const dotenv = require('dotenv');
-    const envPath = path.resolve(__dirname, '../.env');
-    const result = dotenv.config({ path: envPath });
-    if (result.error) throw result.error;
-    console.log(`Loaded environment variables from ${envPath}`);
-} catch (error) {
-    console.log('Note: dotenv not loaded. Relying on system environment variables (standard for CI/Netlify).');
-}
+// Try to load .env for local dev, but ignore errors if missing (CI/CD)
+try { require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); } catch (e) { }
 
-// Function to generate environment file content
-const getEnvFileContent = (isProduction) => `export const environment = {
-    production: ${isProduction},
+// Generate the file content using process.env
+const envFileContent = `export const environment = {
+    production: true,
     firebase: {
         apiKey: '${process.env.FIREBASE_API_KEY || "YOUR_API_KEY"}',
         authDomain: '${process.env.FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN"}',
@@ -28,18 +20,7 @@ const getEnvFileContent = (isProduction) => `export const environment = {
 };
 `;
 
-// Paths
-const targetPathProd = path.join(__dirname, '../src/environments/environment.prod.ts');
-const targetPathDev = path.join(__dirname, '../src/environments/environment.ts');
-
-console.log('Generating environment files...');
-
-// Write environment.prod.ts
-fs.writeFileSync(targetPathProd, getEnvFileContent(true));
-console.log(`Generated ${targetPathProd}`);
-
-// Write environment.ts
-fs.writeFileSync(targetPathDev, getEnvFileContent(false));
-console.log(`Generated ${targetPathDev}`);
-
-console.log('Environment variables configuration completed!');
+// Write strictly to environment.prod.ts for production
+const targetPath = path.join(__dirname, '../src/environments/environment.prod.ts');
+fs.writeFileSync(targetPath, envFileContent);
+console.log(`Generated ${targetPath} using process.env variables.`);
