@@ -1,21 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-const dotenv = require('dotenv');
 
-// Explicitly define path to .env file (assuming it's in frontend root)
-const envPath = path.resolve(__dirname, '../.env');
-
-// Load environment variables
-const result = dotenv.config({ path: envPath });
-
-if (result.error) {
-    console.warn(`WARNING: Could not load .env file from ${envPath}. Using system environment variables.`);
-} else {
+// Try to load dotenv for local development (optional in CI/Production)
+try {
+    const dotenv = require('dotenv');
+    const envPath = path.resolve(__dirname, '../.env');
+    const result = dotenv.config({ path: envPath });
+    if (result.error) throw result.error;
     console.log(`Loaded environment variables from ${envPath}`);
+} catch (error) {
+    console.log('Note: dotenv not loaded. Relying on system environment variables (standard for CI/Netlify).');
 }
-
-console.log('FIREBASE_API_KEY present:', !!process.env.FIREBASE_API_KEY);
-console.log('FIREBASE_PROJECT_ID present:', !!process.env.FIREBASE_PROJECT_ID);
 
 // Function to generate environment file content
 const getEnvFileContent = (isProduction) => `export const environment = {
