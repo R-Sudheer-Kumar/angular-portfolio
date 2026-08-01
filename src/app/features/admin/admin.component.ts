@@ -34,6 +34,7 @@ export class AdminComponent {
   editingProjectId: string | null = null;
   projectForm: FormGroup;
   selectedFile: File | null = null;
+  selectedResumeFile: File | null = null;
 
   // Skill Management
   skills: Skill[] = [];
@@ -41,6 +42,9 @@ export class AdminComponent {
 
   // Experience Management
   experiences: Experience[] = [];
+  editingExperience: boolean = false;
+  editingExperienceId: string | null = null;
+  experienceForm!: FormGroup;
 
   // Seeding
   seeding = false;
@@ -85,7 +89,14 @@ export class AdminComponent {
       bio: [''],
       location: [''],
       email: [''],
-      phone: ['']
+      phone: [''],
+      resumeUrl: [''],
+      yearsOfExperience: [''],
+      projectsCount: [''],
+      workingStatus: [''],
+      statusSymbol: [''],
+      passion: [''],
+      topSkills: ['']
     });
 
     // Project Form
@@ -97,6 +108,20 @@ export class AdminComponent {
       liveUrl: [''],
       featured: [false],
       category: ['Web App'],
+      order: [0]
+    });
+
+    // Experience Form
+    this.experienceForm = this.fb.group({
+      company: ['', Validators.required],
+      role: ['', Validators.required],
+      location: [''],
+      startDate: ['', Validators.required],
+      endDate: [''],
+      current: [false],
+      description: [''],
+      responsibilities: [''],
+      techUsed: [''],
       order: [0]
     });
 
@@ -148,10 +173,27 @@ export class AdminComponent {
     });
   }
 
+  onResumeFileSelected(event: any) {
+    this.selectedResumeFile = event.target.files[0];
+    this.profileForm.markAsDirty();
+  }
+
   async saveProfile() {
-    if (this.profileForm.dirty) {
-      await this.firebaseService.updateProfile(this.profileForm.value);
-      alert('Profile updated!');
+    if (this.profileForm.dirty || this.selectedResumeFile) {
+      try {
+        const profileData = { ...this.profileForm.value };
+        if (this.selectedResumeFile) {
+          const url = await this.firebaseService.uploadResume(this.selectedResumeFile);
+          profileData.resumeUrl = url;
+        }
+        await this.firebaseService.updateProfile(profileData);
+        this.selectedResumeFile = null;
+        this.profileForm.patchValue(profileData);
+        alert('Profile updated!');
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        alert('Failed to save profile');
+      }
     }
   }
 
@@ -243,6 +285,72 @@ export class AdminComponent {
     this.firebaseService.getExperience().subscribe(e => this.experiences = e);
   }
 
+  addNewExperience() {
+    this.editingExperience = true;
+    this.editingExperienceId = null;
+    this.experienceForm.reset({ current: false, order: 0 });
+  }
+
+  editExperience(exp: Experience) {
+    this.editingExperience = true;
+    this.editingExperienceId = exp.id || null;
+    this.experienceForm.patchValue({
+      ...exp,
+      responsibilities: exp.responsibilities ? exp.responsibilities.join('\n') : '',
+      techUsed: exp.techUsed ? exp.techUsed.join(', ') : ''
+    });
+  }
+
+  cancelEditExperience() {
+    this.editingExperience = false;
+    this.editingExperienceId = null;
+  }
+
+  async onSaveExperience() {
+    if (this.experienceForm.invalid) return;
+
+    const formVal = this.experienceForm.value;
+    
+    const respArray = typeof formVal.responsibilities === 'string'
+      ? formVal.responsibilities.split('\n').map((r: string) => r.trim()).filter((r: string) => r.length > 0)
+      : formVal.responsibilities || [];
+
+    const techUsedArray = typeof formVal.techUsed === 'string'
+      ? formVal.techUsed.split(',').map((t: string) => t.trim()).filter((t: string) => t.length > 0)
+      : formVal.techUsed || [];
+
+    const expData: any = {
+      ...formVal,
+      responsibilities: respArray,
+      techUsed: techUsedArray
+    };
+
+    try {
+      if (this.editingExperienceId) {
+        await this.firebaseService.updateExperience(this.editingExperienceId, expData);
+      } else {
+        await this.firebaseService.addExperience(expData);
+      }
+      this.editingExperience = false;
+      this.loadExperiences();
+    } catch (error) {
+      console.error('Error saving experience:', error);
+      alert('Failed to save experience');
+    }
+  }
+
+  async deleteExperience(id: string) {
+    if (confirm('Are you sure you want to delete this experience?')) {
+      try {
+        await this.firebaseService.deleteExperience(id);
+        this.loadExperiences();
+      } catch (error) {
+        console.error('Error deleting experience:', error);
+        alert('Failed to delete experience');
+      }
+    }
+  }
+
   // ─── Seeding ──────────────────────────────────────────
   async seedDatabase() {
     if (!confirm('This will populate the database with default data. Continue?')) return;
@@ -258,12 +366,17 @@ export class AdminComponent {
         email: 'rsudheerkumar40@gmail.com',
         phone: '+91 7780664087',
         location: 'Andhra Pradesh, India',
-        // Ideally upload these assets or use placeholders
         resumeUrl: '',
         socialLinks: [
           { platform: 'GitHub', url: 'https://github.com/R-Sudheer-Kumar', icon: 'github' },
           { platform: 'LinkedIn', url: 'https://www.linkedin.com/in/rachamadugu-sudheer-kumar', icon: 'linkedin' }
-        ]
+        ],
+        yearsOfExperience: '1.5+ Years',
+        projectsCount: '6+ Shipped',
+        workingStatus: 'Currently Working',
+        statusSymbol: 'READY_TO_BUILD',
+        passion: 'Creating Impact',
+        topSkills: 'Angular, .NET 8, MongoDB'
       };
       await this.firebaseService.updateProfile(defaultProfile);
 

@@ -30,7 +30,7 @@ import { Profile, Project } from '../../core/models/portfolio.models';
                 <span class="ping"></span>
                 <span class="dot"></span>
               </span>
-              <span class="status-text">Currently Working</span>
+              <span class="status-text">{{ profile?.workingStatus || 'Currently Working' }}</span>
             </div>
 
             <!-- Headline -->
@@ -83,10 +83,10 @@ import { Profile, Project } from '../../core/models/portfolio.models';
               <div class="terminal-body">
                 <div class="code-line"><span class="line-num">1</span><span><span class="kwd">export </span> <span class="kwd">const </span> <span class="var">developer</span> = <span class="pun">{{ '{' }}</span></span></div>
                 <div class="code-line"><span class="line-num">2</span><span class="indent">name: <span class="str">'{{ profile?.name || "Sudheer" }}'</span>,</span></div>
-                <div class="code-line"><span class="line-num">3</span><span class="indent">role: <span class="str">'Full Stack Engineer'</span>,</span></div>
-                <div class="code-line"><span class="line-num">4</span><span class="indent">skills: [<span class="str">'Angular'</span>, <span class="str">'.NET 8'</span>, <span class="str">'Mongo DB'</span>],</span></div>
-                <div class="code-line"><span class="line-num">5</span><span class="indent">status: <span class="const">Status.READY_TO_BUILD</span>,</span></div>
-                <div class="code-line"><span class="line-num">6</span><span class="indent">passion: <span class="str">'Creating Impact'</span></span></div>
+                <div class="code-line"><span class="line-num">3</span><span class="indent">role: <span class="str">'{{ profile?.title || "Full Stack Engineer" }}'</span>,</span></div>
+                <div class="code-line"><span class="line-num">4</span><span class="indent">skills: [{{ getSkillsArrayString() }}],</span></div>
+                <div class="code-line"><span class="line-num">5</span><span class="indent">status: <span class="const">Status.{{ profile?.statusSymbol || 'READY_TO_BUILD' }}</span>,</span></div>
+                <div class="code-line"><span class="line-num">6</span><span class="indent">passion: <span class="str">'{{ profile?.passion || "Creating Impact" }}'</span></span></div>
                 <div class="code-line"><span class="line-num">7</span><span><span class="pun">{{ '}' }}</span>;</span></div>
               </div>
               <div class="card-glow"></div>
@@ -98,7 +98,7 @@ import { Profile, Project } from '../../core/models/portfolio.models';
                 <div class="float-icon-box blue">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                 </div>
-                <div><p class="float-label">Experience</p><p class="float-value">1.5+ Years</p></div>
+                <div><p class="float-label">Experience</p><p class="float-value">{{ profile?.yearsOfExperience || '1.5+ Years' }}</p></div>
               </div>
             </div>
             <div class="float-card proj-card">
@@ -106,7 +106,7 @@ import { Profile, Project } from '../../core/models/portfolio.models';
                 <div class="float-icon-box purple">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                 </div>
-                <div><p class="float-label">Projects</p><p class="float-value">6+ Shipped</p></div>
+                <div><p class="float-label">Projects</p><p class="float-value">{{ profile?.projectsCount || '6+ Shipped' }}</p></div>
               </div>
             </div>
           </div>
@@ -123,10 +123,7 @@ import { Profile, Project } from '../../core/models/portfolio.models';
             <span class="section-label">About Me</span>
             <h2 class="section-heading">Engineering Scalable <span class="gradient-text">Solutions</span></h2>
             <p class="about-text">
-              I am a <strong>Full Stack Developer</strong> at <strong>Snovasys Solutions</strong>, passionate about building high-performance web applications. My expertise spans <strong>Microfrontends</strong>, <strong>Microservices</strong>, and cloud-native architectures.
-            </p>
-            <p class="about-text muted">
-              Specializing in <strong>Angular</strong> and <strong>.NET 8</strong>, I focus on writing clean, maintainable code that drives business value. Whether optimizing SQL queries or architecting complex frontend states, I deliver robust solutions.
+              {{ profile?.bio || 'Enthusiastic full-stack developer with experience in microfrontends, microservices, and modern web technologies.' }}
             </p>
             
             <div class="feature-grid">
@@ -160,22 +157,22 @@ import { Profile, Project } from '../../core/models/portfolio.models';
               <div class="profile-header">
                 <div class="profile-icon">👨‍💻</div>
                 <div>
-                  <h3 class="profile-name">R. Sudheer Kumar</h3>
-                  <p class="profile-role">Full Stack Engineer</p>
+                  <h3 class="profile-name">{{ profile?.name || 'R. Sudheer Kumar' }}</h3>
+                  <p class="profile-role">{{ profile?.title || 'Full Stack Engineer' }}</p>
                 </div>
               </div>
               <div class="profile-stats">
                 <div class="stat-row">
                   <span class="stat-label">Location</span>
-                  <span class="stat-val">Andhra Pradesh, India</span>
+                  <span class="stat-val">{{ profile?.location || 'Andhra Pradesh, India' }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Experience</span>
-                  <span class="stat-val">1.5+ Years</span>
+                  <span class="stat-val">{{ profile?.yearsOfExperience || '1.5+ Years' }}</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Status</span>
-                  <span class="stat-badge working">Working</span>
+                  <span class="stat-badge working">{{ profile?.workingStatus || 'Working' }}</span>
                 </div>
               </div>
               <div class="tech-pills">
@@ -469,6 +466,16 @@ export class HomeComponent implements OnInit {
     }
 
     setTimeout(() => this.typeEffect(), typeSpeed);
+  }
+
+  getSkillsArrayString(): string {
+    if (!this.profile?.topSkills) {
+      return "'Angular', '.NET 8', 'Mongo DB'";
+    }
+    return this.profile.topSkills
+      .split(',')
+      .map(s => `'${s.trim()}'`)
+      .join(', ');
   }
 
   getGradientClass(index: number): string {

@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService, ThemeMode } from '../../../core/services/theme.service';
+import { FirebaseService } from '../../../core/services/firebase.service';
 import { trigger, transition, style, animate, state } from '@angular/animations';
 
 @Component({
@@ -80,7 +81,7 @@ import { trigger, transition, style, animate, state } from '@angular/animations'
           </button>
 
           <!-- Resume Button (Desktop) -->
-          <a href="/assets/resume.pdf" target="_blank" class="btn-resume desktop-only">
+          <a [href]="profile?.resumeUrl || '/assets/resume.pdf'" target="_blank" class="btn-resume desktop-only">
             Resume
           </a>
 
@@ -105,7 +106,7 @@ import { trigger, transition, style, animate, state } from '@angular/animations'
             </a>
           </li>
           <li>
-            <a href="/assets/resume.pdf" target="_blank" class="mobile-resume-link" (click)="closeMobileMenu()">
+            <a [href]="profile?.resumeUrl || '/assets/resume.pdf'" target="_blank" class="mobile-resume-link" (click)="closeMobileMenu()">
               Download Resume
             </a>
           </li>
@@ -379,11 +380,20 @@ export class NavbarComponent implements OnInit {
     { label: 'Contact', path: '/contact' }
   ];
 
-  constructor(private themeService: ThemeService) { }
+  profile: any = null;
+
+  constructor(
+    private themeService: ThemeService,
+    private firebaseService: FirebaseService
+  ) { }
 
   ngOnInit(): void {
     this.themeService.theme$.subscribe((theme: ThemeMode) => {
       this.isDark = theme === 'dark';
+    });
+
+    this.firebaseService.getProfile().subscribe(profile => {
+      this.profile = profile;
     });
   }
 

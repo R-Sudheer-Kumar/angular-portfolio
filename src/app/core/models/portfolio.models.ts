@@ -63,6 +63,12 @@ export interface Profile {
     photoUrl?: string;
     resumeUrl?: string;
     socialLinks: SocialLink[];
+    yearsOfExperience?: string;
+    projectsCount?: string;
+    workingStatus?: string;
+    statusSymbol?: string;
+    passion?: string;
+    topSkills?: string;
 }
 
 /** Social link model */

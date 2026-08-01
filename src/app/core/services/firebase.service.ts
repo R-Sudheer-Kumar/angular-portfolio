@@ -130,6 +130,10 @@ export class FirebaseService {
         return updateDoc(doc(this.db, 'experience', id), cleanExp);
     }
 
+    async deleteExperience(id: string) {
+        return deleteDoc(doc(this.db, 'experience', id));
+    }
+
     // Messages
     getMessages(): Observable<any[]> {
         return from(getDocs(collection(this.db, 'messages'))).pipe(
@@ -152,6 +156,13 @@ export class FirebaseService {
     // Helper: Upload Image
     async uploadProjectImage(file: File): Promise<string> {
         const path = `projects/${Date.now()}_${file.name}`;
+        const storageRef = ref(this.storage, path);
+        const result = await uploadBytes(storageRef, file);
+        return getDownloadURL(result.ref);
+    }
+
+    async uploadResume(file: File): Promise<string> {
+        const path = `resumes/${Date.now()}_${file.name}`;
         const storageRef = ref(this.storage, path);
         const result = await uploadBytes(storageRef, file);
         return getDownloadURL(result.ref);

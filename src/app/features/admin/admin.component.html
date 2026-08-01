@@ -190,6 +190,13 @@
                         </svg>
                         New Project
                     </button>
+                    <button *ngIf="activeTab === 'experience'" (click)="addNewExperience()"
+                        class="btn-primary flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        New Experience
+                    </button>
                 </div>
             </header>
 
@@ -239,6 +246,52 @@
                                         <label class="text-sm font-medium text-slate-400">Contact Email</label>
                                         <input formControlName="email"
                                             class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Resume URL (Direct link fallback / GDrive / Storage URL)</label>
+                                        <input formControlName="resumeUrl"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Years of Experience (e.g., 1.5+ Years)</label>
+                                        <input formControlName="yearsOfExperience"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Projects Count (e.g., 6+ Shipped)</label>
+                                        <input formControlName="projectsCount"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Working Status (e.g., Currently Working)</label>
+                                        <input formControlName="workingStatus"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Status Symbol (e.g., READY_TO_BUILD)</label>
+                                        <input formControlName="statusSymbol"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Passion (e.g., Creating Impact)</label>
+                                        <input formControlName="passion"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-medium text-slate-400">Top Skills (comma-separated, e.g., Angular, .NET 8, MongoDB)</label>
+                                        <input formControlName="topSkills"
+                                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                                    </div>
+                                    <div class="col-span-2 border border-dashed border-slate-850 rounded-xl p-6 text-center hover:bg-slate-950/50 transition-colors mt-2">
+                                        <label class="cursor-pointer">
+                                            <span class="text-indigo-400 font-medium">Click to upload Resume (PDF)</span>
+                                            <input type="file" (change)="onResumeFileSelected($event)" class="hidden" accept=".pdf">
+                                        </label>
+                                        <p *ngIf="selectedResumeFile" class="text-sm text-green-400 mt-2">{{ selectedResumeFile.name }}</p>
+                                        <p *ngIf="!selectedResumeFile && profileForm.get('resumeUrl')?.value" class="text-xs text-slate-400 mt-1">
+                                            Current Resume: <a [href]="profileForm.get('resumeUrl')?.value" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">View Resume</a>
+                                        </p>
+                                        <p *ngIf="!selectedResumeFile && !profileForm.get('resumeUrl')?.value" class="text-xs text-slate-600 mt-1">PDF up to 10MB</p>
                                     </div>
                                 </div>
                                 <div class="mt-8 flex justify-end">
@@ -388,15 +441,35 @@
                                 </div>
 
                                 <div
-                                    class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-all">
+                                    class="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-all relative overflow-hidden">
                                     <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
                                         <div>
                                             <h3 class="text-xl font-bold text-slate-100">{{ e.role }}</h3>
                                             <div class="text-indigo-400 font-medium">{{ e.company }}</div>
                                         </div>
-                                        <div
-                                            class="bg-slate-800/50 px-3 py-1 rounded-full text-xs font-mono text-slate-400 border border-slate-700 mt-2 md:mt-0 inline-block">
-                                            {{ e.startDate }} — {{ e.current ? 'Present' : e.endDate }}
+                                        <div class="flex items-center gap-3 mt-2 md:mt-0">
+                                            <div
+                                                class="bg-slate-800/50 px-3 py-1 rounded-full text-xs font-mono text-slate-400 border border-slate-700 inline-block">
+                                                {{ e.startDate }} — {{ e.current ? 'Present' : e.endDate }}
+                                            </div>
+                                            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                                                <button (click)="editExperience(e)"
+                                                    class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors"
+                                                    title="Edit">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                    </svg>
+                                                </button>
+                                                <button (click)="deleteExperience(e.id!)"
+                                                    class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors"
+                                                    title="Delete">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                     <p class="text-slate-400 text-sm leading-relaxed">{{ e.description }}</p>
@@ -498,6 +571,89 @@
                 <button (click)="onSaveProject()"
                     class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium shadow-lg shadow-indigo-500/20 transition-all transform hover:-translate-y-0.5">Save
                     Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experience Modal Overlay -->
+    <div *ngIf="editingExperience"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+        <div
+            class="bg-slate-900 w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-slate-100">{{ editingExperienceId ? 'Edit Experience' : 'New Experience' }}
+                </h3>
+                <button (click)="cancelEditExperience()" class="text-slate-500 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <form [formGroup]="experienceForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Company</label>
+                            <input formControlName="company"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Role</label>
+                            <input formControlName="role"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
+                            <input formControlName="location"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Order</label>
+                            <input type="number" formControlName="order"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Start Date</label>
+                            <input type="date" formControlName="startDate"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-1" *ngIf="!experienceForm.get('current')?.value">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">End Date</label>
+                            <input type="date" formControlName="endDate"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" formControlName="current"
+                                    class="w-4 h-4 rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-slate-900">
+                                <span class="text-slate-300 text-sm">I currently work here</span>
+                            </label>
+                        </div>
+                        <div class="space-y-1 col-span-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
+                            <textarea formControlName="description" rows="3"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                        </div>
+                        <div class="space-y-1 col-span-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Responsibilities (One per line)</label>
+                            <textarea formControlName="responsibilities" rows="4" placeholder="Built responsive features&#10;Collaborated with cross-functional teams"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                        </div>
+                        <div class="space-y-1 col-span-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Technologies Used (Comma Separated)</label>
+                            <input formControlName="techUsed" placeholder="Angular, TypeScript, SCSS"
+                                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="p-6 border-t border-slate-800 bg-slate-900/50 backdrop-blur flex justify-end gap-3">
+                <button (click)="cancelEditExperience()"
+                    class="px-4 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">Cancel</button>
+                <button (click)="onSaveExperience()"
+                    class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium shadow-lg shadow-indigo-500/20 transition-all transform hover:-translate-y-0.5">Save
+                    Experience</button>
             </div>
         </div>
     </div>
